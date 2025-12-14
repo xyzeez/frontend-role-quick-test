@@ -53,6 +53,7 @@ These are optional and considered a bonus:
 
 ## What to Submit
 - GitHub repository link
+- Vercel/Netlify Demo Link (A video demo via Loom or Jam.dev is also fine)
 - README including:
   - Setup instructions
   - Any assumptions or trade-offs made
