@@ -1,70 +1,73 @@
-# Frontend Developer Take-Home Assessment (React / Next.js)
+# React + TypeScript + Vite
 
-## Objective
-This assessment is designed to evaluate your ability to convert designs into clean, responsive, production-ready frontend code using React/Next.js.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-The focus is on **UI accuracy, component structure, state handling, and code quality** — not backend complexity.
+Currently, two official plugins are available:
 
-## Product Context
-You are building a **simple crypto checkout experience** that can be **embedded on any website** (similar to Stripe Checkout but crypto-payment checkout).
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-The checkout allows a user to:
-- Review payment details
-- Enter required information
-- Complete a payment flow
+## React Compiler
 
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-## Design
-Use the Figma design below as a reference:
+## Expanding the ESLint configuration
 
-🔗 **Figma Design:**  
-https://www.figma.com/design/FRfbMHys4JINX4V9qBxgbf/Frontend-Assessment?node-id=0-1
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
+```js
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
 
-## Task
-Select **any 2 pages/screens** from the Figma design and convert them into code.
+      // Remove tseslint.configs.recommended and replace with this
+      tseslint.configs.recommendedTypeChecked,
+      // Alternatively, use this for stricter rules
+      tseslint.configs.strictTypeChecked,
+      // Optionally, add this for stylistic rules
+      tseslint.configs.stylisticTypeChecked,
 
-You are free to choose which two pages you think best demonstrate your skills.
+      // Other configs...
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+```
 
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-## Technical Requirements
-- Use **React.js or Next.js**
-- TypeScript is preferred
-- Responsive design (desktop + mobile)
-- Clean component structure
-- Basic form state handling
-- Reasonable accessibility practices
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
 
-
-## Functional Expectations
-- Components should reflect the design closely
-- Forms should capture input and manage state
-- Buttons and interactions should behave logically
-- No backend integration required (mock data is fine)
-
-
-## Nice-to-Have (Optional)
-These are optional and considered a bonus:
-- Reusable components
-- Basic form validation
-- Simple loading or error states
-- Thoughtful folder structure
-
-
-## What to Submit
-- GitHub repository link
-- Vercel/Netlify Demo Link (A video demo via Loom or Jam.dev is also fine)
-- README including:
-  - Setup instructions
-  - Any assumptions or trade-offs made
-
-
-## Time Expectation
-- **Estimated effort:** 4–6 hours
-- **Deadline:** 24 hours from receiving this assessment
-
-
-## Notes
-- Do not overengineer
-- Focus on clarity, structure, and UI quality
-- Pixel-perfect is important as clean, maintainable code
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+      // Enable lint rules for React
+      reactX.configs['recommended-typescript'],
+      // Enable lint rules for React DOM
+      reactDom.configs.recommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+```
