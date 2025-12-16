@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm, Controller, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -68,6 +68,34 @@ const paymentMethods: SelectItem[] = [
   { label: "Mobile Money", value: "mobile_money" },
 ];
 
+// Conversion rate map: [payCurrency][receiveCurrency] = rate
+const conversionRates: Record<string, Record<string, number>> = {
+  eth: {
+    ngn: 2500000,
+    usd: 2500,
+    eur: 2300,
+    gbp: 2000,
+  },
+  usdt: {
+    ngn: 1500,
+    usd: 1,
+    eur: 0.92,
+    gbp: 0.79,
+  },
+  usdc: {
+    ngn: 1500,
+    usd: 1,
+    eur: 0.92,
+    gbp: 0.79,
+  },
+  bnb: {
+    ngn: 500000,
+    usd: 500,
+    eur: 460,
+    gbp: 400,
+  },
+};
+
 const formSchema = z.object({
   payAmount: z
     .string()
@@ -103,11 +131,14 @@ export default function CryptoToCash() {
     handleSubmit,
     setValue,
     control,
+    watch,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      payAmount: "1.00",
       payCurrency: cryptoCurrencies[0].value,
+      receiveAmount: "2500000.00",
       receiveCurrency: realCurrencies[0].value,
       payFrom: "",
       payTo: "",
@@ -137,8 +168,73 @@ export default function CryptoToCash() {
       item.value.toLowerCase().includes(receiveSearchQuery.toLowerCase()),
   );
 
+  const formatNumber = (value: string): string => {
+    const numericValue = value.replace(/[^\d.]/g, "");
+    if (!numericValue || numericValue === ".") return "";
+
+    const parts = numericValue.split(".");
+    const integerPart = parts[0] || "";
+    const decimalPart = parts[1] || "";
+
+    const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+    return decimalPart
+      ? `${formattedInteger}.${decimalPart}`
+      : formattedInteger;
+  };
+
+  const parseNumber = (value: string): string => {
+    return value.replace(/,/g, "");
+  };
+
+  const convertPayToReceive = (payAmount: string) => {
+    const payValue = parseFloat(parseNumber(payAmount));
+    if (isNaN(payValue) || payValue <= 0) return "0.00";
+
+    const rate = conversionRates[payCurrencyValue]?.[receiveCurrencyValue];
+    if (!rate) return "0.00";
+
+    const converted = payValue * rate;
+    return converted.toFixed(2);
+  };
+
+  const convertReceiveToPay = (receiveAmount: string) => {
+    const receiveValue = parseFloat(parseNumber(receiveAmount));
+    if (isNaN(receiveValue) || receiveValue <= 0) return "0.00";
+
+    const rate = conversionRates[payCurrencyValue]?.[receiveCurrencyValue];
+    if (!rate) return "0.00";
+
+    const converted = receiveValue / rate;
+    return converted.toFixed(2);
+  };
+
+  const payAmountValue = watch("payAmount");
+  const receiveAmountValue = watch("receiveAmount");
+
+  const handlePayAmountBlur = () => {
+    if (payAmountValue) {
+      const converted = convertPayToReceive(payAmountValue);
+      setValue("receiveAmount", converted, { shouldValidate: true });
+    }
+  };
+
+  const handleReceiveAmountBlur = () => {
+    if (receiveAmountValue) {
+      const converted = convertReceiveToPay(receiveAmountValue);
+      setValue("payAmount", converted, { shouldValidate: true });
+    }
+  };
+
+  useEffect(() => {
+    const currentPayAmount = watch("payAmount");
+    if (currentPayAmount && payCurrencyValue && receiveCurrencyValue) {
+      const converted = convertPayToReceive(currentPayAmount);
+      setValue("receiveAmount", converted, { shouldValidate: true });
+    }
+  }, [payCurrencyValue, receiveCurrencyValue]);
+
   const onSubmit = (data: FormData) => {
-    // Navigate to /pay with form data
     navigate("/pay?tab=bank-info", {
       state: {
         cryptoToCash: {
@@ -170,12 +266,23 @@ export default function CryptoToCash() {
                 <label htmlFor="payAmount" className="sr-only">
                   Amount
                 </label>
-                <input
-                  type="text"
-                  id="payAmount"
-                  placeholder="0.00"
-                  {...register("payAmount")}
-                  className="text-ui-black w-full text-2xl font-semibold outline-0"
+                <Controller
+                  name="payAmount"
+                  control={control}
+                  render={({ field }) => (
+                    <input
+                      type="text"
+                      id="payAmount"
+                      placeholder="0.00"
+                      value={field.value || ""}
+                      onChange={(e) => field.onChange(e.target.value)}
+                      onBlur={() => {
+                        field.onBlur();
+                        handlePayAmountBlur();
+                      }}
+                      className="text-ui-black w-full text-2xl font-semibold outline-0"
+                    />
+                  )}
                 />
                 {errors.payAmount && (
                   <p className="mt-1 text-xs text-red-500">
@@ -225,6 +332,16 @@ export default function CryptoToCash() {
                           setValue("payCurrency", item.value);
                           setPayIsOpen(false);
                           setPaySearchQuery("");
+                          setTimeout(() => {
+                            const currentPayAmount = watch("payAmount");
+                            if (currentPayAmount) {
+                              const converted =
+                                convertPayToReceive(currentPayAmount);
+                              setValue("receiveAmount", converted, {
+                                shouldValidate: true,
+                              });
+                            }
+                          }, 0);
                         }}
                       >
                         <div className="flex items-center gap-x-2">
@@ -259,12 +376,26 @@ export default function CryptoToCash() {
                 <label htmlFor="receiveAmount" className="sr-only">
                   Amount
                 </label>
-                <input
-                  type="text"
-                  id="receiveAmount"
-                  placeholder="0.00"
-                  {...register("receiveAmount")}
-                  className="text-ui-black w-full text-2xl font-semibold outline-0"
+                <Controller
+                  name="receiveAmount"
+                  control={control}
+                  render={({ field }) => (
+                    <input
+                      type="text"
+                      id="receiveAmount"
+                      placeholder="0.00"
+                      value={formatNumber(field.value || "")}
+                      onChange={(e) => {
+                        const parsed = parseNumber(e.target.value);
+                        field.onChange(parsed);
+                      }}
+                      onBlur={() => {
+                        field.onBlur();
+                        handleReceiveAmountBlur();
+                      }}
+                      className="text-ui-black w-full text-2xl font-semibold outline-0"
+                    />
+                  )}
                 />
                 {errors.receiveAmount && (
                   <p className="mt-1 text-xs text-red-500">
@@ -317,6 +448,16 @@ export default function CryptoToCash() {
                           setValue("receiveCurrency", item.value);
                           setReceiveIsOpen(false);
                           setReceiveSearchQuery("");
+                          setTimeout(() => {
+                            const currentPayAmount = watch("payAmount");
+                            if (currentPayAmount) {
+                              const converted =
+                                convertPayToReceive(currentPayAmount);
+                              setValue("receiveAmount", converted, {
+                                shouldValidate: true,
+                              });
+                            }
+                          }, 0);
                         }}
                       >
                         <div className="flex items-center gap-x-2">
