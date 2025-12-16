@@ -5,7 +5,7 @@ import { z } from "zod";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Link } from "react-router";
+import { Link, useNavigate, useLocation, Navigate } from "react-router";
 import { ArrowLeftIcon, ChevronDownIcon } from "lucide-react";
 import {
   DropdownMenu,
@@ -59,6 +59,8 @@ type FormData = z.infer<typeof formSchema>;
 
 export default function ContactInfo() {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const {
     register,
@@ -75,12 +77,23 @@ export default function ContactInfo() {
   });
 
   const onSubmit = (data: FormData) => {
-    console.log("Form submitted:", data);
-    console.log("Contact info:", {
-      email: data.email,
-      phoneNumber: `${data.countryCode} ${data.phoneNumber}`,
+    navigate("/pay?tab=sender-details", {
+      state: {
+        cryptoToCash: location.state.cryptoToCash,
+        bankInfo: location.state.bankInfo,
+        contactInfo: {
+          email: data.email,
+          countryCode: data.countryCode,
+          phoneNumber: data.phoneNumber,
+        },
+      },
     });
   };
+
+  if (!location.state?.bankInfo) {
+    return <Navigate to="/" replace />;
+  }
+
   return (
     <div className="grid grid-rows-[auto_1fr] space-y-10">
       <header className="grid grid-cols-[1fr_auto_1fr] items-center justify-between">

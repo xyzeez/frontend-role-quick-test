@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useForm, Controller, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
@@ -91,6 +92,7 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>;
 
 export default function CryptoToCash() {
+  const navigate = useNavigate();
   const [paySearchQuery, setPaySearchQuery] = useState("");
   const [receiveSearchQuery, setReceiveSearchQuery] = useState("");
   const [payIsOpen, setPayIsOpen] = useState(false);
@@ -136,14 +138,18 @@ export default function CryptoToCash() {
   );
 
   const onSubmit = (data: FormData) => {
-    console.log("Form submitted:", data);
-    console.log("Form data:", {
-      payAmount: data.payAmount,
-      payCurrency: data.payCurrency,
-      receiveAmount: data.receiveAmount,
-      receiveCurrency: data.receiveCurrency,
-      payFrom: data.payFrom,
-      payTo: data.payTo,
+    // Navigate to /pay with form data
+    navigate("/pay?tab=bank-info", {
+      state: {
+        cryptoToCash: {
+          payAmount: data.payAmount,
+          payCurrency: data.payCurrency,
+          receiveAmount: data.receiveAmount,
+          receiveCurrency: data.receiveCurrency,
+          payFrom: data.payFrom,
+          payTo: data.payTo,
+        },
+      },
     });
   };
 

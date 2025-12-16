@@ -11,7 +11,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Link } from "react-router";
+import { Link, useNavigate, useLocation, Navigate } from "react-router";
 import { ArrowLeftIcon } from "lucide-react";
 import gtbankImg from "@/assets/gtbank.jpeg";
 import accessbankImg from "@/assets/accessbank.png";
@@ -46,6 +46,9 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>;
 
 export default function BankInfo() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const {
     register,
     handleSubmit,
@@ -61,13 +64,21 @@ export default function BankInfo() {
   });
 
   const onSubmit = (data: FormData) => {
-    console.log("Form submitted:", data);
-    console.log("Bank info:", {
-      bank: data.bank,
-      accountNumber: data.accountNumber,
-      accountName: data.accountName,
+    navigate("/pay?tab=contact-info", {
+      state: {
+        cryptoToCash: location.state.cryptoToCash,
+        bankInfo: {
+          bank: data.bank,
+          accountNumber: data.accountNumber,
+          accountName: data.accountName,
+        },
+      },
     });
   };
+
+  if (!location.state?.cryptoToCash) {
+    return <Navigate to="/" replace />;
+  }
 
   return (
     <div className="grid grid-rows-[auto_1fr] space-y-10">

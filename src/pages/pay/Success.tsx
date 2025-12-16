@@ -1,9 +1,17 @@
 import { Button } from "@/components/ui/button";
 import checkImg from "@/assets/check.png";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import { Clipboarder } from "@/components/common/Clipboarder";
 
 export default function Success() {
+  const location = useLocation();
+
+  // Console log all received data
+  console.log("Success page - All received data:", location.state);
+  console.log("Success page - cryptoToCash:", location.state?.cryptoToCash);
+  console.log("Success page - contactInfo:", location.state?.contactInfo);
+  console.log("Success page - bankInfo:", location.state?.bankInfo);
+
   return (
     <div className="grid grid-rows-[auto_1fr] space-y-16">
       <header className="flex items-center justify-center">

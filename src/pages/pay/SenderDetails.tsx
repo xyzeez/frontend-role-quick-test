@@ -1,25 +1,65 @@
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router";
+import { Link, useNavigate, useLocation, Navigate } from "react-router";
 import { ArrowLeftIcon, CircleAlert, CopyIcon } from "lucide-react";
 import { Clipboarder } from "@/components/common/Clipboarder";
 
-const summaryData = [
-  {
-    label: "Amount to send",
-    text: "100 ETH",
-    icon: CopyIcon,
-  },
-  {
-    label: "Network",
-    text: "ETH",
-  },
-  {
-    label: "Wallet",
-    text: "Other",
-  },
-];
+// Currency mapping
+const currencyMap: Record<string, string> = {
+  eth: "ETH",
+  usdt: "USDT",
+  usdc: "USDC",
+  bnb: "BNB",
+};
+
+// Wallet mapping
+const walletMap: Record<string, string> = {
+  metamask: "MetaMask",
+  rainbow: "Rainbow",
+  walletconnect: "Wallet Connect",
+  other: "Other",
+};
 
 export default function SenderDetails() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Get currency and wallet from form data
+  const payCurrency = location.state?.cryptoToCash?.payCurrency || "eth";
+  const currencyLabel = currencyMap[payCurrency] || payCurrency.toUpperCase();
+  const payAmount = location.state?.cryptoToCash?.payAmount || "100";
+  const payFrom = location.state?.cryptoToCash?.payFrom || "other";
+  const walletLabel = walletMap[payFrom] || "Other";
+
+  const summaryData = [
+    {
+      label: "Amount to send",
+      text: `${payAmount} ${currencyLabel}`,
+      icon: CopyIcon,
+    },
+    {
+      label: "Network",
+      text: currencyLabel,
+    },
+    {
+      label: "Wallet",
+      text: walletLabel,
+    },
+  ];
+
+  const handleSubmit = () => {
+    navigate("/pay/success", {
+      state: {
+        cryptoToCash: location.state.cryptoToCash,
+        contactInfo: location.state.contactInfo,
+        bankInfo: location.state.bankInfo,
+      },
+    });
+  };
+
+  if (!location.state?.contactInfo || !location.state?.bankInfo) {
+    return <Navigate to="/" replace />;
+  }
+
   return (
     <div className="grid grid-rows-[auto_1fr] space-y-8">
       <header className="grid grid-cols-[1fr_auto_1fr] items-center justify-between">
@@ -30,7 +70,7 @@ export default function SenderDetails() {
         </div>
         <div className="text-center">
           <h1 className="text-primary text-center text-xl font-medium">
-            Send ETH to the address below
+            Send {currencyLabel} to the address below
           </h1>
         </div>
         <div />
@@ -65,12 +105,13 @@ export default function SenderDetails() {
           <p className="grid grid-cols-[auto_1fr] gap-2">
             <CircleAlert className="text-primary size-6" />
             <span className="text-ui-gray-1 text-sm">
-              Only send USDT to this address. Ensure the sender is on the CELO
+              Only send {currencyLabel} to this address. Ensure the sender is on
+              the {walletLabel}
               network otherwise you might lose your deposit
             </span>
           </p>
         </div>
-        <Button size="lg" className="mt-auto w-full">
+        <Button size="lg" className="mt-auto w-full" onClick={handleSubmit}>
           I have sent it
         </Button>
       </div>
