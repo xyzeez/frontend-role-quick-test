@@ -14,17 +14,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import ethImg from "@/assets/eth.png";
+import ngnImg from "@/assets/ngn.png";
+import usdImg from "@/assets/usd.png";
+import eurImg from "@/assets/eur.jpg";
+import gbpImg from "@/assets/gbp.jpg";
 
 const countryCodes = [
-  { code: "+234", name: "Nigeria" },
-  { code: "+1", name: "United States" },
-  { code: "+44", name: "United Kingdom" },
-  { code: "+33", name: "France" },
-  { code: "+49", name: "Germany" },
-  { code: "+91", name: "India" },
-  { code: "+86", name: "China" },
-  { code: "+81", name: "Japan" },
+  { code: "+234", name: "Nigeria", image: ngnImg },
+  { code: "+1", name: "United States", image: usdImg },
+  { code: "+44", name: "United Kingdom", image: gbpImg },
+  { code: "+33", name: "France", image: eurImg },
 ];
 
 const formSchema = z.object({
@@ -122,50 +121,55 @@ export default function ContactInfo() {
               <Controller
                 name="countryCode"
                 control={control}
-                render={({ field }) => (
-                  <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-                    <DropdownMenuTrigger
-                      className="bg-ui-gray-6 flex items-center gap-x-1 rounded-s-4xl border border-e-0 px-3 py-2.5 sm:gap-x-2 sm:px-6 sm:py-5"
-                      asChild
-                    >
-                      <button type="button">
-                        <div className="flex items-center gap-x-0.5 sm:gap-x-1">
-                          <span>{field.value}</span>
-                          <img
-                            src={ethImg}
-                            alt="Country"
-                            className="size-5 rounded-full"
-                          />
-                        </div>
-                        <ChevronDownIcon
-                          className={`text-primary size-5 transition-transform duration-200 ${
-                            isOpen ? "rotate-180" : ""
-                          }`}
-                        />
-                      </button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                      {countryCodes.map((country) => (
-                        <DropdownMenuItem
-                          key={country.code}
-                          onClick={() => {
-                            field.onChange(country.code);
-                            setIsOpen(false);
-                          }}
-                        >
-                          <div className="flex items-center gap-x-1">
+                render={({ field }) => {
+                  const selectedCountry = countryCodes.find(
+                    (country) => country.code === field.value,
+                  );
+                  return (
+                    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+                      <DropdownMenuTrigger
+                        className="bg-ui-gray-6 flex items-center gap-x-1 rounded-s-4xl border border-e-0 px-3 py-2.5 sm:gap-x-2 sm:px-6 sm:py-5"
+                        asChild
+                      >
+                        <button type="button">
+                          <div className="flex items-center gap-x-0.5 sm:gap-x-1">
+                            <span>{field.value}</span>
                             <img
-                              src={ethImg}
-                              alt={country.name}
+                              src={selectedCountry?.image || ngnImg}
+                              alt={selectedCountry?.name || "Country"}
                               className="size-5 rounded-full"
                             />
-                            <span>{country.code}</span>
                           </div>
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                )}
+                          <ChevronDownIcon
+                            className={`text-primary size-5 transition-transform duration-200 ${
+                              isOpen ? "rotate-180" : ""
+                            }`}
+                          />
+                        </button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        {countryCodes.map((country) => (
+                          <DropdownMenuItem
+                            key={country.code}
+                            onClick={() => {
+                              field.onChange(country.code);
+                              setIsOpen(false);
+                            }}
+                          >
+                            <div className="flex items-center gap-x-1">
+                              <img
+                                src={country.image}
+                                alt={country.name}
+                                className="size-5 rounded-full border"
+                              />
+                              <span>{country.code}</span>
+                            </div>
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  );
+                }}
               />
               <Input
                 id="phoneNumber"

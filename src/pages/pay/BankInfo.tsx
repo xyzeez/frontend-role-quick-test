@@ -11,9 +11,12 @@ import {
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import ethImg from "@/assets/eth.png";
 import { Link } from "react-router";
 import { ArrowLeftIcon } from "lucide-react";
+import gtbankImg from "@/assets/gtbank.jpeg";
+import accessbankImg from "@/assets/accessbank.png";
+import zenithbankImg from "@/assets/zenithbank.png";
+import ubaImg from "@/assets/uba.jpeg";
 
 type BankItem = {
   label: string;
@@ -22,12 +25,10 @@ type BankItem = {
 };
 
 const banks: BankItem[] = [
-  { label: "Access Bank", value: "access_bank", image: ethImg },
-  { label: "First Bank", value: "first_bank", image: ethImg },
-  { label: "GTBank", value: "gtbank", image: ethImg },
-  { label: "UBA", value: "uba", image: ethImg },
-  { label: "Zenith Bank", value: "zenith_bank", image: ethImg },
-  { label: "Kuda Bank", value: "kuda_bank", image: ethImg },
+  { label: "Access Bank", value: "access_bank", image: accessbankImg },
+  { label: "Zenith Bank", value: "zenith_bank", image: zenithbankImg },
+  { label: "GTBank", value: "gtbank", image: gtbankImg },
+  { label: "UBA", value: "uba", image: ubaImg },
 ];
 
 const formSchema = z.object({

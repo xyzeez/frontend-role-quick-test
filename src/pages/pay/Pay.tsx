@@ -5,7 +5,7 @@ import SenderDetails from "./SenderDetails";
 
 function Pay() {
   const [searchParams] = useSearchParams();
-  const activeTab = searchParams.get("tab") || "sender-details";
+  const activeTab = searchParams.get("tab") || "bank-info";
 
   return (
     <main className="grid">

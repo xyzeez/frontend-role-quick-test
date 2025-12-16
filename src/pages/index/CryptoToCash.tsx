@@ -18,6 +18,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import ethImg from "@/assets/eth.png";
+import rainbowImg from "@/assets/rainbow.png";
+import metamaskImg from "@/assets/metamask.jpeg";
+import walletconnectImg from "@/assets/wallet-connect.jpeg";
+import usdtImg from "@/assets/usdt.jpeg";
+import usdcImg from "@/assets/usdc.png";
+import bnbImg from "@/assets/bnb.jpeg";
+import ngnImg from "@/assets/ngn.png";
+import usdImg from "@/assets/usd.png";
+import eurImg from "@/assets/eur.jpg";
+import gbpImg from "@/assets/gbp.jpg";
 import { ChevronDownIcon, SearchIcon, Wallet } from "lucide-react";
 
 type SelectItem = {
@@ -29,28 +39,24 @@ type SelectItem = {
 // Crypto currencies
 const cryptoCurrencies: SelectItem[] = [
   { label: "ETH", value: "eth", image: ethImg },
-  { label: "BTC", value: "btc", image: ethImg },
-  { label: "USDT", value: "usdt", image: ethImg },
-  { label: "USDC", value: "usdc", image: ethImg },
-  { label: "BNB", value: "bnb", image: ethImg },
-  { label: "SOL", value: "sol", image: ethImg },
+  { label: "USDT", value: "usdt", image: usdtImg },
+  { label: "USDC", value: "usdc", image: usdcImg },
+  { label: "BNB", value: "bnb", image: bnbImg },
 ];
 
 // Real currencies
 const realCurrencies: SelectItem[] = [
-  { label: "NGN", value: "ngn", image: ethImg },
-  { label: "USD", value: "usd", image: ethImg },
-  { label: "EUR", value: "eur", image: ethImg },
-  { label: "GBP", value: "gbp", image: ethImg },
-  { label: "KES", value: "kes", image: ethImg },
-  { label: "GHS", value: "ghs", image: ethImg },
+  { label: "NGN", value: "ngn", image: ngnImg },
+  { label: "USD", value: "usd", image: usdImg },
+  { label: "EUR", value: "eur", image: eurImg },
+  { label: "GBP", value: "gbp", image: gbpImg },
 ];
 
 // Wallet options
 const walletOptions: SelectItem[] = [
-  { label: "MetaMask", value: "metamask", image: ethImg },
-  { label: "Rainbow", value: "rainbow", image: ethImg },
-  { label: "Wallet Coin", value: "walletcoin", image: ethImg },
+  { label: "MetaMask", value: "metamask", image: metamaskImg },
+  { label: "Rainbow", value: "rainbow", image: rainbowImg },
+  { label: "Wallet Connect", value: "walletconnect", image: walletconnectImg },
 ];
 
 // Payment methods
