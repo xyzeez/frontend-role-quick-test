@@ -2,7 +2,9 @@
 
 This is my implementation of the frontend assessment. The requirement was to implement 2 pages from the Figma design, but I decided to build out the entire flow instead.
 
-Figma design: https://www.figma.com/design/FRfbMHys4JINX4V9qBxgbf/Frontend-Assessment?node-id=0-1
+**Live Demo:** https://fe-quick-test.netlify.app/  
+**Repository:** https://github.com/xyzeez/frontend-role-quick-test  
+**Figma Design:** https://www.figma.com/design/FRfbMHys4JINX4V9qBxgbf/Frontend-Assessment?node-id=0-1
 
 ## Setup
 
