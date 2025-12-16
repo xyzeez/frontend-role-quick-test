@@ -3,6 +3,7 @@ import AppLayout from "./components/layouts/AppLayout";
 import Index from "./pages/index/Index";
 import Pay from "./pages/pay/Pay";
 import Success from "./pages/pay/Success";
+import NotFound from "./pages/NotFound";
 
 const router = createBrowserRouter([
   {
@@ -19,6 +20,10 @@ const router = createBrowserRouter([
       {
         path: "/pay/success",
         element: <Success />,
+      },
+      {
+        path: "*",
+        element: <NotFound />,
       },
     ],
   },
